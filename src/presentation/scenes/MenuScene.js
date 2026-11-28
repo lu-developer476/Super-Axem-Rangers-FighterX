@@ -80,6 +80,11 @@ export class MenuScene extends Phaser.Scene {
     playMenuMusic(this);
     this.#createBackdrop();
     this.ui = this.add.container(0, 0);
+    this.scale.on(Phaser.Scale.Events.RESIZE, this.#centerViewport, this);
+    this.events.once(Phaser.Scenes.Events.SHUTDOWN, () => {
+      this.scale.off(Phaser.Scale.Events.RESIZE, this.#centerViewport, this);
+    });
+    this.#centerViewport();
     this.keys = this.input.keyboard.addKeys({
       up: Phaser.Input.Keyboard.KeyCodes.UP,
       down: Phaser.Input.Keyboard.KeyCodes.DOWN,
@@ -88,6 +93,12 @@ export class MenuScene extends Phaser.Scene {
     });
     this.#showHome();
     this.cameras.main.fadeIn(220, 0, 0, 0);
+  }
+
+  #centerViewport() {
+    const centerX = this.cameras.main.centerX;
+    this.ui?.setX(centerX - GAME_WIDTH / 2);
+    this.titleArt?.setX(centerX);
   }
 
   update() {
